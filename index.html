@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temporally Synchronized Video-to-Audio Generation via Scale-Adapted Positional Embeddings</title>
+<style>
+/* CSS Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background: #f4f4f4;
+  color: #333;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.single_video_container {
+  width: 25%;
+  margin: auto;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.single_video_container video {
+    width: 100%;
+    height: 50%;
+}
+
+h1, h2 {
+  color: #333;
+  text-align: center;
+}
+
+p {
+  font-size: 1em;
+  text-align: center;
+}
+
+a {
+  color: #00f;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+section {
+  background: #fff;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+}
+
+.section-header {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  background: #fff;
+  padding-right: 10px;
+}
+
+.model-image {
+  max-width: 30%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 15px;
+}
+
+.abstract-text {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+
+.example {
+  margin-bottom: 20px;
+}
+
+.example h3 {
+  margin-bottom: 5px;
+}
+
+.video-container-new {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* 每行间距 */
+}
+
+.description-column {
+  width: 20%; /* 描述列宽度 */
+  margin-right: 10px;
+}
+
+.description-column h4 {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.description-column p {
+  text-align: center;
+  margin-top: 80px;
+  margin-bottom: 10px;
+  /* text-align: left; 左对齐描述 */
+}
+
+.video-row-new {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px; /* 每列间距 */
+}
+
+.video-column-new {
+  width: 23%; /* 三列布局 */
+  margin-bottom: 12px;
+}
+
+.video-column-new h4 {
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+
+.video-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.video-column {
+  width: 18%;
+  margin-bottom: 12px;
+}
+
+.video-column h4 {
+  font-size: x-small;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+video {
+  width: 50%;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+audio {
+  width: 90%;
+  margin-top: 80px;
+  /* margin-bottom: 10px; */
+  border-radius: 10px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background: #333;
+  color: #fff;
+  margin-top: 20px;
+}
+
+@media screen and (min-width: 768px) {
+  video {
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Temporally Synchronized Video-to-Audio Generation via Scale-Adapted Positional Embeddings</h1>
+
+  <p>Anonymous</p>
+      <p style="line-height:0.6">
+        <!-- <sup>1</sup>Anonymous -->
+      </p>
+
+  <section>
+    <div class="section-header"><h2>Introduction</h2></div>
+    <!-- <img src="figures/system_overview.jpg" alt="Model Architecture" class="model-image"> -->
+    <p class="abstract-text">The task of video-to-audio (V2A) generation aims at producing audio clips
+      that are semantically aligned and temporally synchronized with silent video inputs. Despite recent
+      progress, achieving precise audio-visual synchronization remains a significant challenge. This
+      paper introduces scale-adapted positional embeddings (SAPE), a novel approach designed to address
+      synchronization challenges in V2A systems. SAPE provides a simple and effective plug-in module
+      compatible with any positional embedding and multimodal architecture, eliminating the need for
+      complex systems or post-processing. Additionally, we explore the impact of visual encoders on
+      synchronization and demonstrate that combining different visual encoders enhances synchronization
+      by balancing semantic richness and low-level temporal details. Extensive experiments using a
+      flow matching model show that SAPE significantly improves synchronization while maintaining system
+      simplicity, offering a versatile and efficient solution for V2A generation. </p>
+  </section>
+
+  <section>
+    <div class="section-header"><h2>Video-to-Audio Generation on GreatestHits</a></h2></div>
+    <div class="video-container">
+      <div class="video-column">
+        <h4>Ground Truth</h4>
+          <video controls>
+            <source src="videos/GreatestHits-GT/1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <video controls>
+            <source src="videos/GreatestHits-GT/2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <video controls>
+            <source src="videos/GreatestHits-GT/3.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <video controls>
+            <source src="videos/GreatestHits-GT/4.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <video controls>
+            <source src="videos/GreatestHits-GT/5.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <video controls>
+            <source src="videos/GreatestHits-GT/6.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <video controls>
+            <source src="videos/GreatestHits-GT/7.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+      </div>
+
+      <div class="video-column">
+        <h4>Baseline (Flow-Sin+RoPE)</h4>
+        <video controls>
+          <source src="videos/GreatestHits-Baseline/1.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-Baseline/2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-Baseline/3.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-Baseline/4.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-Baseline/5.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-Baseline/6.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-Baseline/7.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <div class="video-column">
+        <h4>Baseline (Flow-concat)</h4>
+        <video controls>
+          <source src="videos/GreatestHits-concat/1.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-concat/2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-concat/3.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-concat/4.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-concat/5.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-concat/6.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-concat/7.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <div class="video-column">
+        <h4>Flow-SA-RoPE (CLIP)</h4>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE/1.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE/2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE/3.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE/4.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE/5.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE/6.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE/7.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <div class="video-column">
+        <h4>Flow-SA-RoPE (CLIP + DINO v2 with weighted addition)</h4>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE-WA/1.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE-WA/2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE-WA/3.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE-WA/4.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE-WA/5.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE-WA/6.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video controls>
+          <source src="videos/GreatestHits-SAPE-WA/7.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>&copy; Anonymous.</p>
+</footer>
+
+</body>
+</html>
